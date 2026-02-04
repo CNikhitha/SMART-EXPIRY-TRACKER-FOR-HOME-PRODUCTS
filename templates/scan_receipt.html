@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Scan Receipt - Smart Expiry Products{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-receipt"></i>
+            <h2>Scan Receipt</h2>
+            <p>Upload a receipt image to automatically extract and add all products</p>
+        </div>
+        
+        <div class="receipt-info">
+            <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+            <ol>
+                <li>Take a clear photo of your receipt or upload an image/PDF</li>
+                <li>Our system will extract product names using OCR technology</li>
+                <li>All products will be automatically added to your inventory</li>
+                <li>Products will have default expiry dates (7 days for food, 30-365 days for others)</li>
+            </ol>
+            
+            <div class="tips">
+                <h4><i class="fas fa-lightbulb"></i> Tips for Best Results:</h4>
+                <ul>
+                    <li>Use clear, well-lit photos</li>
+                    <li>Ensure text is readable and not blurry</li>
+                    <li>Supported formats: PNG, JPG, JPEG, PDF</li>
+                    <li>Maximum file size: 16MB</li>
+                    <li><strong>Make sure Tesseract OCR is installed on your system</strong></li>
+                </ul>
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" class="receipt-form" id="receiptForm">
+            <div class="form-group">
+                <label for="receipt">
+                    <i class="fas fa-file-upload"></i> Upload Receipt
+                </label>
+                <input type="file" id="receipt" name="receipt" accept=".png,.jpg,.jpeg,.pdf" required>
+                <small class="form-text">Supported: PNG, JPG, JPEG, PDF (Max 16MB)</small>
+            </div>
+            
+            <div class="preview-container" id="previewContainer" style="display: none;">
+                <h4>Preview:</h4>
+                <img id="previewImage" src="" alt="Receipt preview" class="receipt-preview">
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-search"></i> Scan & Add Products
+                </button>
+            </div>
+        </form>
+        
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Processing receipt... This may take a few moments.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Extracting text and parsing products...</p>
+        </div>
+    </div>
+    
+    {% if session.get('last_extracted_text') %}
+    <div class="debug-section" style="margin-top: 2rem; padding: 1.5rem; background: #f0f0f0; border-radius: 8px; border: 2px solid #FF9800;">
+        <h4><i class="fas fa-bug"></i> Debug Information</h4>
+        <p><strong>Extracted Text Length:</strong> {{ session.get('extracted_text_length', 0) }} characters</p>
+        <p><strong>First 2000 characters of extracted text:</strong></p>
+        <pre style="max-height: 300px; overflow-y: auto; font-size: 0.8rem; background: white; padding: 1rem; border-radius: 4px; border: 1px solid #ddd;">{{ session.get('last_extracted_text', '') }}</pre>
+        <button onclick="this.parentElement.style.display='none'" class="btn btn-sm btn-secondary" style="margin-top: 1rem;">
+            <i class="fas fa-times"></i> Hide Debug Info
+        </button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const receiptInput = document.getElementById('receipt');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const receiptForm = document.getElementById('receiptForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    receiptInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    });
+    
+    receiptForm.addEventListener('submit', function() {
+        loadingOverlay.style.display = 'flex';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    });
+</script>
+{% endblock %}
+

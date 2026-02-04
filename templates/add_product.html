@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - Smart Expiry Products{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-plus-circle"></i>
+            <h2>Add New Product</h2>
+            <p>Enter product details to track expiry</p>
+        </div>
+        
+        <form method="POST" class="product-form">
+            <div class="form-group">
+                <label for="product_id">
+                    <i class="fas fa-barcode"></i> Product ID
+                </label>
+                <input type="text" id="product_id" name="product_id" required autofocus 
+                       placeholder="Enter unique product ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="product_name">
+                    <i class="fas fa-tag"></i> Product Name
+                </label>
+                <input type="text" id="product_name" name="product_name" required 
+                       placeholder="Enter product name">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">
+                    <i class="fas fa-folder"></i> Category
+                </label>
+                <select id="category" name="category" required>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if cat == 'General' %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="purchase_date">
+                        <i class="fas fa-shopping-cart"></i> Purchase Date
+                    </label>
+                    <input type="date" id="purchase_date" name="purchase_date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expiry_date">
+                        <i class="fas fa-calendar-times"></i> Expiry Date
+                    </label>
+                    <input type="date" id="expiry_date" name="expiry_date" required>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('purchase_date').valueAsDate = new Date();
+    const purchaseDateInput = document.getElementById('purchase_date');
+    const expiryDateInput = document.getElementById('expiry_date');
+    purchaseDateInput.addEventListener('change', function() {
+        expiryDateInput.min = this.value;
+    });
+</script>
+{% endblock %}

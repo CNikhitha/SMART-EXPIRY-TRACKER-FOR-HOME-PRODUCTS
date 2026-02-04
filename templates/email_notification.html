@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #4CAF50; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; border-radius: 0 0 8px 8px; }
+        .product-item { background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #FF9800; }
+        .footer { text-align: center; padding: 20px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Products Expiring Soon</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{ user.username }},</p>
+            <p>The following products are expiring within the next 7 days:</p>
+            
+            {% for product in products %}
+            <div class="product-item">
+                <h3>{{ product.product_name }}</h3>
+                <p><strong>Product ID:</strong> {{ product.product_id }}</p>
+                <p><strong>Category:</strong> {{ product.category or 'General' }}</p>
+                <p><strong>Expiry Date:</strong> {{ product.expiry_date.strftime('%Y-%m-%d') }}</p>
+                <p><strong>Days Remaining:</strong> {{ product.days_until_expiry() }} days</p>
+            </div>
+            {% endfor %}
+            
+            <p>Please take necessary action to use or dispose of these products.</p>
+        </div>
+        <div class="footer">
+            <p>Smart Expiry Products Management System</p>
+        </div>
+    </div>
+</body>
+</html>
+

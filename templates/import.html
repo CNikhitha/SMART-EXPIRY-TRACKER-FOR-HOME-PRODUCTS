@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Import Products - Smart Expiry Products{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-upload"></i>
+            <h2>Import Products from CSV</h2>
+            <p>Upload a CSV file to import multiple products at once</p>
+        </div>
+        
+        <div class="import-info">
+            <h3><i class="fas fa-info-circle"></i> CSV Format Requirements</h3>
+            <p>The CSV file must contain the following columns:</p>
+            <ul>
+                <li><strong>Product ID</strong> - Unique identifier for the product</li>
+                <li><strong>Product Name</strong> - Name of the product</li>
+                <li><strong>Purchase Date</strong> - Date in YYYY-MM-DD format</li>
+                <li><strong>Expiry Date</strong> - Date in YYYY-MM-DD format</li>
+                <li><strong>Category</strong> - (Optional) Product category</li>
+            </ul>
+            
+            <div class="sample-csv">
+                <h4>Sample CSV:</h4>
+                <pre>Product ID,Product Name,Category,Purchase Date,Expiry Date
+PROD001,Milk,Food,2024-01-15,2024-02-15
+PROD002,Medicine A,Medicine,2024-01-20,2025-01-20</pre>
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" class="import-form">
+            <div class="form-group">
+                <label for="file">
+                    <i class="fas fa-file-csv"></i> Select CSV File
+                </label>
+                <input type="file" id="file" name="file" accept=".csv" required>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Import Products
+                </button>
+            </div>
+        </form>
+        
+        <div class="export-link">
+            <p>Need a template? <a href="{{ url_for('export_products') }}">Download sample CSV</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

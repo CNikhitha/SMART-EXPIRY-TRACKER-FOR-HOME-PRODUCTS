@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Smart Expiry Products{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1><i class="fas fa-chart-bar"></i> Analytics & Insights</h1>
+        <p>Visualize your product data and trends</p>
+    </div>
+
+    {% if stats %}
+    <div class="stats-grid">
+        <div class="stat-card stat-primary">
+            <div class="stat-icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total }}</h3>
+                <p>Total Products</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.active }}</h3>
+                <p>Active Products</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-danger">
+            <div class="stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.expired }}</h3>
+                <p>Expired Products</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.expiring_soon }}</h3>
+                <p>Expiring Soon</p>
+            </div>
+        </div>
+    </div>
+
+    {% if stats.avg_days_until_expiry > 0 %}
+    <div class="stat-card stat-info" style="max-width: 300px; margin: 20px auto;">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ "%.1f"|format(stats.avg_days_until_expiry) }}</h3>
+            <p>Avg Days Until Expiry</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if charts %}
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Products by Expiry Status</h3>
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ charts.status }}" alt="Status Chart" class="chart-image">
+            </div>
+        </div>
+        
+        {% if charts.category %}
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar"></i> Products by Category</h3>
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ charts.category }}" alt="Category Chart" class="chart-image">
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line"></i> Monthly Purchase and Expiry Trends</h3>
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ charts.trends }}" alt="Trends Chart" class="chart-image">
+            </div>
+        </div>
+        
+        {% if charts.expiring %}
+        <div class="chart-card chart-full">
+            <h3><i class="fas fa-exclamation-circle"></i> Products Expiring in Next 30 Days</h3>
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ charts.expiring }}" alt="Expiring Chart" class="chart-image">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-chart-bar"></i>
+        <h3>No data available</h3>
+        <p>Add some products to see analytics and insights.</p>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Product
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

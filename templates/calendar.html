@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar - Smart Expiry Products{% endblock %}
+
+{% block content %}
+<div class="calendar-container">
+    <div class="calendar-header">
+        <h1><i class="fas fa-calendar"></i> Expiry Calendar</h1>
+        <p>View products by expiry date</p>
+    </div>
+
+    <div class="calendar-wrapper">
+        <div class="calendar-legend">
+            <div class="legend-item">
+                <span class="legend-color expired"></span>
+                <span>Expired</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color expiring-soon"></span>
+                <span>Expiring Soon (≤7 days)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color active"></span>
+                <span>Active</span>
+            </div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+            {% for product in products %}
+            <div class="calendar-item {% if product.is_expired() %}expired{% elif product.days_until_expiry() <= 7 %}expiring-soon{% else %}active{% endif %}" 
+                 data-date="{{ product.expiry_date.isoformat() }}">
+                <div class="calendar-item-header">
+                    <strong>{{ product.product_name }}</strong>
+                    <span class="calendar-date">{{ product.expiry_date.strftime('%b %d, %Y') }}</span>
+                </div>
+                <div class="calendar-item-body">
+                    <p><i class="fas fa-barcode"></i> {{ product.product_id }}</p>
+                    <p><i class="fas fa-folder"></i> {{ product.category or 'General' }}</p>
+                    {% if not product.is_expired() %}
+                    <p><i class="fas fa-clock"></i> {{ product.days_until_expiry() }} days left</p>
+                    {% else %}
+                    <p><i class="fas fa-exclamation-triangle"></i> Expired</p>
+                    {% endif %}
+                </div>
+                <div class="calendar-item-actions">
+                    <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not products %}
+        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No products to display</h3>
+            <p>Add products to see them in the calendar view.</p>
+            <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Product
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
